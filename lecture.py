@@ -18,15 +18,20 @@ while True:
     # Бинаризация. Пиксели со значением > 200 становятся белыми (250), остальные — чёрными.
     _, frame = cv2.threshold(frame, 200, 250, cv2.THRESH_BINARY)
 
-
+    # Морфологическое расширение (dilate) -
     kernel = np.ones((5, 5), np.uint8)
-    frame = cv2.dilate(frame, kernel, iterations=16)
-    conts, _ = cv2.findContours(frame, cv2.RETR_TREE, cv2.CHAIN_APPROX_NONE)
+    frame = cv2.dilate(frame, kernel, iterations=16) # «раздувает» белые области,
+                                                        # делая их более заметными (16 итераций усиливают эффект).
+
+    conts, _ = cv2.findContours(frame, cv2.RETR_TREE, cv2.CHAIN_APPROX_NONE) # находит контуры объектов на бинарном изображении.
+
+    # Отрисовка контуров
     for i in range(0, len(conts)):
         cv2.drawContours(frame_color, conts, i, (0, 255, 0), 10)
     cv2.imshow('frame', frame_color)
 
     if cv2.waitKey(1) & 0xff == ord('q'):
         break
+
 capture.release()  # Закрываем камеру
 cv2.destroyAllWindows()  # Закрываем все окна OpenCV
